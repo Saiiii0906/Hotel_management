@@ -1,0 +1,19 @@
+add_library(core STATIC
+    DateTime.cpp
+    IDGenerator.cpp
+    Logger.cpp
+    Config.cpp
+    FileManager.cpp
+)
+
+# Public: consumers see include/ headers.
+# Private: this directory for any internal implementation headers.
+target_include_directories(core
+    PUBLIC  ${PROJECT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+apply_project_warnings(core)
+
+# FileHandler.h is header-only — no .cpp needed.
+# It is picked up automatically via the PUBLIC include path above.
