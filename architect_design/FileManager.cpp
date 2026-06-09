@@ -1,4 +1,4 @@
-#include "core/FileManager.h"
+#include "FileManager.h"
 
 #include <filesystem>
 #include <iostream>
@@ -6,14 +6,14 @@
 
 namespace fs = std::filesystem;
 
-// ── Singleton ─────────────────────────────────────────────────────────────────
+
 
 FileManager& FileManager::instance() {
     static FileManager inst;
     return inst;
 }
 
-// ── Bootstrap ─────────────────────────────────────────────────────────────────
+
 
 bool FileManager::ensureDirectories() const {
     bool ok = true;
@@ -26,15 +26,14 @@ bool FileManager::ensureDirectories() const {
     return ok;
 }
 
-// ── Private ───────────────────────────────────────────────────────────────────
+
 
 bool FileManager::createDirectory(const std::string& path) const {
     std::error_code ec;
     fs::create_directories(path, ec);
 
     if (ec) {
-        // Write directly to stderr — Logger is not available yet when
-        // FileManager is called at startup (Logger depends on LOG_DIR existing).
+        
         std::cerr << "[FileManager] Failed to create directory '"
                   << path << "': " << ec.message() << '\n';
         return false;
