@@ -7,8 +7,6 @@
 #include <cmath>
 #include <array>
 
-// ── Construction ──────────────────────────────────────────────────────────────
-
 DateTime::DateTime(int year, int month, int day,
                    int hour, int minute, int second) noexcept
     : year_(year), month_(month), day_(day),
@@ -28,10 +26,7 @@ DateTime DateTime::now() noexcept {
 }
 
 DateTime DateTime::fromString(const std::string& iso) noexcept {
-    // Expected: "YYYY-MM-DDTHH:MM:SS"
-    // Any other format returns a zeroed DateTime — consistent with the
-    // project-wide policy of no exceptions from parsing.
-    if (iso.size() < 19) return DateTime(0, 0, 0);
+        if (iso.size() < 19) return DateTime(0, 0, 0);
 
     std::istringstream ss(iso);
     std::tm t{};
@@ -40,8 +35,6 @@ DateTime DateTime::fromString(const std::string& iso) noexcept {
 
     return fromTm(t);
 }
-
-// ── Formatting ────────────────────────────────────────────────────────────────
 
 std::string DateTime::toISOString() const {
     char buf[20];
@@ -83,11 +76,9 @@ std::string DateTime::toFileSafe() const {
     return buf;
 }
 
-// ── Arithmetic ────────────────────────────────────────────────────────────────
+
 
 int DateTime::daysBetween(const DateTime& other) const noexcept {
-    // mktime is DST-aware; naive (epoch_a - epoch_b) / 86400 can be off by 1
-    // on days that include a DST transition.
     std::time_t a = toEpoch();
     std::time_t b = other.toEpoch();
     if (a == -1 || b == -1) return 0;
@@ -105,8 +96,6 @@ int DateTime::hoursBetween(const DateTime& other) const noexcept {
     return static_cast<int>(std::abs(diff) / 3600.0);
 }
 
-// ── Comparison ────────────────────────────────────────────────────────────────
-
 bool DateTime::operator==(const DateTime& rhs) const noexcept {
     return year_   == rhs.year_   && month_  == rhs.month_  &&
            day_    == rhs.day_    && hour_   == rhs.hour_   &&
@@ -119,8 +108,6 @@ bool DateTime::operator<=(const DateTime& rhs) const noexcept { return toEpoch()
 bool DateTime::operator> (const DateTime& rhs) const noexcept { return toEpoch() >  rhs.toEpoch(); }
 bool DateTime::operator>=(const DateTime& rhs) const noexcept { return toEpoch() >= rhs.toEpoch(); }
 
-// ── Private helpers ───────────────────────────────────────────────────────────
-
 std::tm DateTime::toTm() const noexcept {
     std::tm t{};
     t.tm_year = year_   - 1900;
@@ -129,7 +116,7 @@ std::tm DateTime::toTm() const noexcept {
     t.tm_hour = hour_;
     t.tm_min  = minute_;
     t.tm_sec  = second_;
-    t.tm_isdst = -1;   // let mktime determine DST
+    t.tm_isdst = -1;   
     return t;
 }
 
@@ -146,5 +133,5 @@ DateTime DateTime::fromTm(const std::tm& t) noexcept {
 
 std::time_t DateTime::toEpoch() const noexcept {
     std::tm t = toTm();
-    return std::mktime(&t);   // normalises fields; handles DST
+    return std::mktime(&t);   
 }
